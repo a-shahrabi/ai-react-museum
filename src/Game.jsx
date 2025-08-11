@@ -13,15 +13,16 @@ const ALL = [
 ];
 
 export default function Game({ onSaved }) {
-  const questions = useMemo(() => ALL.slice().sort(() => Math.random() - 0.5).slice(0,5), []);
+  const questions = useMemo(() => ALL.slice().sort(() => Math.random() - 0.5).slice(0, 5), []);
   const [i, setI] = useState(0);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState(null); // 'correct' | 'wrong' | null
+  const [savedMsg, setSavedMsg] = useState('');
   const q = questions[i];
 
   function pick(ans) {
     const correct = ans === q.a;
-    if (correct) setScore(s => s + 1);
+    if (correct) setScore((s) => s + 1);
     setFeedback(correct ? 'correct' : 'wrong');
   }
 
@@ -29,9 +30,11 @@ export default function Game({ onSaved }) {
     if (i + 1 >= questions.length) {
       // finished → save
       const res = await saveScore(score);
-      if (!res.ok) alert(res.error);
-      else alert(`Score saved: ${score}/5`);
-      onSaved?.(); // e.g., go to leaderboard
+      if (!res.ok) setSavedMsg(res.error || 'Could not save score');
+      else setSavedMsg(`Saved: ${score}/5`);
+
+      // switch to leaderboard after a tiny pause so user sees the message
+      setTimeout(() => onSaved?.(), 400);
       return;
     }
     setI(i + 1);
@@ -41,27 +44,37 @@ export default function Game({ onSaved }) {
   return (
     <div style={{ maxWidth: 720, margin: '2rem auto' }}>
       <h2>🎮 AI or Human?</h2>
-      <div style={{ margin: '8px 0' }}>Q{i+1}/5 — Score: {score}</div>
+      <div style={{ margin: '8px 0' }}>Q{i + 1}/5 — Score: {score}</div>
 
       {!feedback ? (
         <>
-          <div style={{ padding:12, border:'1px solid #ccc', borderRadius:8, minHeight:80 }}>
+          <div style={{ padding: 12, border: '1px solid #ccc', borderRadius: 8, minHeight: 80 }}>
             {q.t}
           </div>
-          <div style={{ display:'flex', gap:8, marginTop:12 }}>
+          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
             <button onClick={() => pick('ai')}>AI</button>
             <button onClick={() => pick('human')}>Human</button>
           </div>
         </>
       ) : (
         <>
-          <div style={{ marginTop:12, fontWeight:700, color: feedback==='correct' ? 'green' : 'crimson' }}>
+          <div
+            style={{
+              marginTop: 12,
+              fontWeight: 700,
+              color: feedback === 'correct' ? 'green' : 'crimson',
+            }}
+          >
             {feedback === 'correct' ? '✅ Correct!' : '❌ Not quite'}
           </div>
-          <button style={{ marginTop:8 }} onClick={next}>
+          <button style={{ marginTop: 8 }} onClick={next}>
             {i + 1 >= questions.length ? 'Finish & Save' : 'Next'}
           </button>
         </>
+      )}
+
+      {savedMsg && (
+        <div style={{ marginTop: 8, color: '#7aa' }}>{savedMsg}</div>
       )}
     </div>
   );
