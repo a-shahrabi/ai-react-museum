@@ -30,13 +30,15 @@ export default function Game({ onSaved }) {
   async function next() {
     if (i + 1 >= questions.length) {
       // finished → save
-      const res = await saveScore(score);
-      if (!res.ok) setSavedMsg(res.error || 'Could not save score');
-      else setSavedMsg(`Saved: ${score}/5`);
-
-      // switch to leaderboard after a tiny pause so user sees the message
-      setTimeout(() => onSaved?.(), 400);
-      return;
+    const res = await saveScore(score);
+    if (!res.ok) setSavedMsg(res.error || 'Could not save score');
+    else {
+    setSavedMsg(`Saved: ${score}/5`);
+    await markSectionComplete(0); // <-- auto mark Game as done
+    }
+    // switch to leaderboard after a tiny pause so user sees the message
+    setTimeout(() => onSaved?.(), 400);
+    return;
     }
     setI(i + 1);
     setFeedback(null);

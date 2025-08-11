@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabaseClient';
 import { ensureProfile } from './lib/ensureProfile';
+import { markSectionComplete } from './lib/progress'; // <-- add this
+
 
 export default function ShareWall() {
   const [what, setWhat]   = useState('');
