@@ -11,30 +11,16 @@ export default function Leaderboard() {
     setMsg('');
     const { data, error } = await supabase
       .from('scores')
-      .select('score, user_id, created_at')      // keep simple; names later
+      .select('score, user_id, created_at')
       .order('score', { ascending: false })
       .limit(10);
     if (error) { setMsg(error.message); return; }
     setRows(data || []);
   }
 
-  // Temporary helper so you can test inserting a score from the UI
-  async function addTestScore(score = Math.floor(Math.random()*6)) {
-    setMsg('');
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { setMsg('Please sign in first.'); return; }
-    const { error } = await supabase.from('scores').insert({ user_id: user.id, score });
-    if (error) { setMsg(error.message); return; }
-    setMsg(`Saved score: ${score}`);
-    await load();
-  }
-
   return (
     <div style={{ maxWidth: 720, margin: '2rem auto' }}>
       <h2>🏆 Leaderboard (Top 10)</h2>
-      <button onClick={() => addTestScore()} style={{ padding:'8px 12px', margin:'8px 0' }}>
-        Add Test Score
-      </button>
       <div style={{ marginTop: 6, color: '#7aa' }}>{msg}</div>
 
       <table style={{ width:'100%', borderCollapse:'collapse', marginTop:12 }}>
@@ -53,10 +39,7 @@ export default function Leaderboard() {
           {rows.map((r, i) => (
             <tr key={i}>
               <td style={{ padding:'8px' }}>{i+1}</td>
-              <td style={{ padding:'8px' }}>
-                {/* We'll show display names later; for now, short user id */}
-                {String(r.user_id).slice(0,8)}…
-              </td>
+              <td style={{ padding:'8px' }}>{String(r.user_id).slice(0,8)}…</td>
               <td style={{ padding:'8px' }}>{r.score}</td>
               <td style={{ padding:'8px' }}>{new Date(r.created_at).toLocaleString()}</td>
             </tr>
