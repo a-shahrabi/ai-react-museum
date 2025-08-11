@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { saveScore } from './lib/scores';
+import { markSectionComplete } from './lib/progress';
 
 const ALL = [
   { t: "Roses are red...", a: "human" },

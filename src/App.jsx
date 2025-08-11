@@ -4,10 +4,11 @@ import AuthTest from './AuthTest';
 import ShareWall from './ShareWall';
 import Leaderboard from './Leaderboard';
 import Game from './Game';
+import Progress from './Progress'; // <-- added
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [tab, setTab] = useState('game'); // 'game' | 'share' | 'leaderboard'
+  const [tab, setTab] = useState('game'); // 'game' | 'share' | 'leaderboard' | 'progress'
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user || null));
@@ -34,16 +35,10 @@ export default function App() {
           zIndex: 10
         }}
       >
-        <button
-          onClick={() => setTab('game')}
-          style={{ fontWeight: tab === 'game' ? 700 : 400 }}
-        >
+        <button onClick={() => setTab('game')} style={{ fontWeight: tab === 'game' ? 700 : 400 }}>
           Game
         </button>
-        <button
-          onClick={() => setTab('share')}
-          style={{ fontWeight: tab === 'share' ? 700 : 400 }}
-        >
+        <button onClick={() => setTab('share')} style={{ fontWeight: tab === 'share' ? 700 : 400 }}>
           Share Wall
         </button>
         <button
@@ -52,11 +47,18 @@ export default function App() {
         >
           Leaderboard
         </button>
+        <button
+          onClick={() => setTab('progress')}
+          style={{ fontWeight: tab === 'progress' ? 700 : 400 }}
+        >
+          Progress
+        </button>
       </header>
 
       {tab === 'game' && <Game onSaved={() => setTab('leaderboard')} />}
       {tab === 'share' && <ShareWall />}
       {tab === 'leaderboard' && <Leaderboard />}
+      {tab === 'progress' && <Progress />}{/* <-- added */}
     </div>
   );
 }
