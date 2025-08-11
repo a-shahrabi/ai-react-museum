@@ -1,7 +1,6 @@
 import { supabase } from './supabaseClient';
 
 export async function markSectionComplete(section) {
-  // section: number (0..5). We'll use: 0=Game, 1=Share, 2=Leaderboard for now.
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok:false, error:'Not signed in' };
   const { error } = await supabase.from('progress').upsert({

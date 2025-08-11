@@ -1,51 +1,57 @@
 import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabaseClient';
+import { markSectionComplete } from './lib/progress';
 
 export default function Leaderboard() {
-  const [rows, setRows] = useState([]);
-  const [msg, setMsg]   = useState('');
+  const [scores, setScores] = useState([]);
 
-  useEffect(() => { load(); }, []);
-
-  async function load() {
-    setMsg('');
+  async function loadScores() {
     const { data, error } = await supabase
       .from('scores')
-      .select('score, user_id, created_at')
+      .select('score, created_at, user_id, display_name')
       .order('score', { ascending: false })
       .limit(10);
-    if (error) { setMsg(error.message); return; }
-    setRows(data || []);
+    if (!error) setScores(data || []);
   }
 
-  return (
-    <div style={{ maxWidth: 720, margin: '2rem auto' }}>
-      <h2>🏆 Leaderboard (Top 10)</h2>
-      <div style={{ marginTop: 6, color: '#7aa' }}>{msg}</div>
+  useEffect(() => {
+    loadScores();
+    markSectionComplete(2);
 
-      <table style={{ width:'100%', borderCollapse:'collapse', marginTop:12 }}>
-        <thead>
-          <tr>
-            <th style={{ textAlign:'left', borderBottom:'1px solid #ccc', padding:'8px' }}>#</th>
-            <th style={{ textAlign:'left', borderBottom:'1px solid #ccc', padding:'8px' }}>User</th>
-            <th style={{ textAlign:'left', borderBottom:'1px solid #ccc', padding:'8px' }}>Score</th>
-            <th style={{ textAlign:'left', borderBottom:'1px solid #ccc', padding:'8px' }}>When</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.length === 0 && (
-            <tr><td colSpan="4" style={{ padding:'10px' }}>No scores yet.</td></tr>
-          )}
-          {rows.map((r, i) => (
-            <tr key={i}>
-              <td style={{ padding:'8px' }}>{i+1}</td>
-              <td style={{ padding:'8px' }}>{String(r.user_id).slice(0,8)}…</td>
-              <td style={{ padding:'8px' }}>{r.score}</td>
-              <td style={{ padding:'8px' }}>{new Date(r.created_at).toLocaleString()}</td>
+    // 🔵 Realtime: new scores
+    const channel = supabase
+      .channel('realtime:scores')
+      .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'scores' },
+        () => loadScores() // just reload top 10 for simplicity
+      )
+      .subscribe();
+
+    return () => supabase.removeChannel(channel);
+  }, []);
+
+  return (
+    <div>
+      <h2 style={{marginTop:0}}>🏆 Leaderboard (Top 10)</h2>
+      <div className="card">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>User</th><th>Score</th><th>When</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {scores.length===0 && <tr><td colSpan="3" className="small">No scores yet.</td></tr>}
+            {scores.map((row, i) => (
+              <tr key={i}>
+                <td>{row.display_name?.trim() || `${row.user_id?.slice(0,8)}…`}</td>
+                <td><span className="badge">{row.score}/5</span></td>
+                <td className="small">{new Date(row.created_at).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

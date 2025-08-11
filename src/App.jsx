@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabaseClient';
 import AuthTest from './AuthTest';
-import ShareWall from './ShareWall';
-import Leaderboard from './Leaderboard';
+import Intro from './Intro';
 import Game from './Game';
-import Progress from './Progress'; // <-- added
+import Train from './Train';
+import ShareWall from './ShareWall';
+import Discuss from './Discuss';
+import Leaderboard from './Leaderboard';
+import Progress from './Progress';
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [tab, setTab] = useState('game'); // 'game' | 'share' | 'leaderboard' | 'progress'
+  const [tab, setTab] = useState('intro'); // default to Intro
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user || null));
@@ -18,47 +21,43 @@ export default function App() {
     return () => sub?.subscription?.unsubscribe();
   }, []);
 
-  if (!user) return <AuthTest />;
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    setUser(null);
+    setTab('intro');
+  }
+
+  if (!user) return <div className="container"><AuthTest /></div>;
 
   return (
-    <div>
-      <header
-        style={{
-          display: 'flex',
-          gap: 12,
-          justifyContent: 'center',
-          padding: '10px 0',
-          borderBottom: '1px solid #ddd',
-          position: 'sticky',
-          top: 0,
-          background: '#fff',
-          zIndex: 10
-        }}
-      >
-        <button onClick={() => setTab('game')} style={{ fontWeight: tab === 'game' ? 700 : 400 }}>
-          Game
-        </button>
-        <button onClick={() => setTab('share')} style={{ fontWeight: tab === 'share' ? 700 : 400 }}>
-          Share Wall
-        </button>
-        <button
-          onClick={() => setTab('leaderboard')}
-          style={{ fontWeight: tab === 'leaderboard' ? 700 : 400 }}
-        >
-          Leaderboard
-        </button>
-        <button
-          onClick={() => setTab('progress')}
-          style={{ fontWeight: tab === 'progress' ? 700 : 400 }}
-        >
-          Progress
-        </button>
-      </header>
+    <>
+      <div className="header">
+        <div className="header-inner container">
+          <div className="tabs">
+            <button className={`tab ${tab==='intro'?'active':''}`} onClick={()=>setTab('intro')}>Intro</button>
+            <button className={`tab ${tab==='game'?'active':''}`} onClick={()=>setTab('game')}>Game</button>
+            <button className={`tab ${tab==='train'?'active':''}`} onClick={()=>setTab('train')}>Train</button>
+            <button className={`tab ${tab==='share'?'active':''}`} onClick={()=>setTab('share')}>Share</button>
+            <button className={`tab ${tab==='discuss'?'active':''}`} onClick={()=>setTab('discuss')}>Discuss</button>
+            <button className={`tab ${tab==='leaderboard'?'active':''}`} onClick={()=>setTab('leaderboard')}>Leaderboard</button>
+            <button className={`tab ${tab==='progress'?'active':''}`} onClick={()=>setTab('progress')}>Progress</button>
+          </div>
+          <div className="row right" style={{alignItems:'center'}}>
+            <span className="small">{user?.email}</span>
+            <button className="btn danger" onClick={handleSignOut}>Log out</button>
+          </div>
+        </div>
+      </div>
 
-      {tab === 'game' && <Game onSaved={() => setTab('leaderboard')} />}
-      {tab === 'share' && <ShareWall />}
-      {tab === 'leaderboard' && <Leaderboard />}
-      {tab === 'progress' && <Progress />}{/* <-- added */}
-    </div>
+      <main className="container">
+        {tab === 'intro'       && <div className="card"><Intro /></div>}
+        {tab === 'game'        && <div className="card"><Game onSaved={() => setTab('leaderboard')} /></div>}
+        {tab === 'train'       && <div className="card"><Train /></div>}
+        {tab === 'share'       && <div className="card"><ShareWall /></div>}
+        {tab === 'discuss'     && <div className="card"><Discuss /></div>}
+        {tab === 'leaderboard' && <div className="card"><Leaderboard /></div>}
+        {tab === 'progress'    && <div className="card"><Progress /></div>}
+      </main>
+    </>
   );
 }

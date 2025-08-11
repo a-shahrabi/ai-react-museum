@@ -17,68 +17,61 @@ export default function Game({ onSaved }) {
   const questions = useMemo(() => ALL.slice().sort(() => Math.random() - 0.5).slice(0, 5), []);
   const [i, setI] = useState(0);
   const [score, setScore] = useState(0);
-  const [feedback, setFeedback] = useState(null); // 'correct' | 'wrong' | null
+  const [feedback, setFeedback] = useState(null);
   const [savedMsg, setSavedMsg] = useState('');
+  const [saving, setSaving] = useState(false);
   const q = questions[i];
 
   function pick(ans) {
+    if (feedback) return;
     const correct = ans === q.a;
-    if (correct) setScore((s) => s + 1);
+    if (correct) setScore(s => s + 1);
     setFeedback(correct ? 'correct' : 'wrong');
   }
 
   async function next() {
     if (i + 1 >= questions.length) {
-      // finished → save
-    const res = await saveScore(score);
-    if (!res.ok) setSavedMsg(res.error || 'Could not save score');
-    else {
-    setSavedMsg(`Saved: ${score}/5`);
-    await markSectionComplete(0); // <-- auto mark Game as done
+      setSaving(true);
+      const res = await saveScore(score);
+      if (!res.ok) setSavedMsg(res.error || 'Could not save score');
+      else { setSavedMsg(`Saved: ${score}/5`); await markSectionComplete(0); }
+      setSaving(false);
+      if (onSaved) setTimeout(() => onSaved?.(), 400); else setTimeout(() => setSavedMsg(''), 1000);
+      return;
     }
-    // switch to leaderboard after a tiny pause so user sees the message
-    setTimeout(() => onSaved?.(), 400);
-    return;
-    }
-    setI(i + 1);
-    setFeedback(null);
+    setI(i + 1); setFeedback(null);
   }
 
+  const isNextDisabled = (i + 1 >= questions.length) ? saving : false;
+
   return (
-    <div style={{ maxWidth: 720, margin: '2rem auto' }}>
-      <h2>🎮 AI or Human?</h2>
-      <div style={{ margin: '8px 0' }}>Q{i + 1}/5 — Score: {score}</div>
+    <div>
+      <h2 style={{marginTop:0}}>🎮 AI or Human?</h2>
+      <div className="small">Q{i + 1}/5 — Score: {score}</div>
 
       {!feedback ? (
         <>
-          <div style={{ padding: 12, border: '1px solid #ccc', borderRadius: 8, minHeight: 80 }}>
+          <div className="card" style={{marginTop:12}}>
             {q.t}
           </div>
-          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-            <button onClick={() => pick('ai')}>AI</button>
-            <button onClick={() => pick('human')}>Human</button>
+          <div className="row" style={{marginTop:12}}>
+            <button className="btn secondary" onClick={() => pick('ai')} disabled={!!feedback}>AI</button>
+            <button className="btn secondary" onClick={() => pick('human')} disabled={!!feedback}>Human</button>
           </div>
         </>
       ) : (
         <>
-          <div
-            style={{
-              marginTop: 12,
-              fontWeight: 700,
-              color: feedback === 'correct' ? 'green' : 'crimson',
-            }}
-          >
+          <div className="badge" style={{marginTop:12, background: feedback==='correct'?'#062e1f':'#2b0f14', color: feedback==='correct'?'#8ef5c4':'#ffb4b4'}}>
             {feedback === 'correct' ? '✅ Correct!' : '❌ Not quite'}
           </div>
-          <button style={{ marginTop: 8 }} onClick={next}>
-            {i + 1 >= questions.length ? 'Finish & Save' : 'Next'}
+          <div className="spacer"></div>
+          <button className="btn" onClick={next} disabled={isNextDisabled}>
+            {i + 1 >= questions.length ? (saving ? 'Saving…' : 'Finish & Save') : 'Next'}
           </button>
         </>
       )}
 
-      {savedMsg && (
-        <div style={{ marginTop: 8, color: '#7aa' }}>{savedMsg}</div>
-      )}
+      {savedMsg && <div className="small" style={{marginTop:10}}>{savedMsg}</div>}
     </div>
   );
 }
