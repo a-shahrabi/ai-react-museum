@@ -3,10 +3,11 @@ import { supabase } from './lib/supabaseClient';
 import AuthTest from './AuthTest';
 import ShareWall from './ShareWall';
 import Leaderboard from './Leaderboard';
+import Game from './Game';
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [tab, setTab]   = useState('share'); // 'share' | 'leaderboard'
+  const [tab, setTab]   = useState('game'); // 'game' | 'share' | 'leaderboard'
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user || null));
@@ -21,10 +22,14 @@ export default function App() {
   return (
     <div>
       <div style={{ display:'flex', gap:8, justifyContent:'center', marginTop:16 }}>
+        <button onClick={() => setTab('game')}>Game</button>
         <button onClick={() => setTab('share')}>Share Wall</button>
         <button onClick={() => setTab('leaderboard')}>Leaderboard</button>
       </div>
-      {tab === 'share' ? <ShareWall /> : <Leaderboard />}
+
+      {tab === 'game' && <Game onSaved={() => setTab('leaderboard')} />}
+      {tab === 'share' && <ShareWall />}
+      {tab === 'leaderboard' && <Leaderboard />}
     </div>
   );
 }
