@@ -1,4 +1,4 @@
-#AI & Data Science Learning Hub for Students
+AI & Data Science Learning Hub for Students
 Overview
 
 This web application is an interactive, beginner-friendly platform designed for middle school students in Ontario to learn about Machine Learning and Data Science in a safe, engaging, and school-compliant way.
@@ -20,7 +20,7 @@ One safe, preloaded hands-on activity where students interact with a mini AI mod
 
 School-friendly design: No personal data collection, no external tracking, all content runs in the browser
 
-###Modules
+Modules
 1. Welcome & Intro
 
 Short explanation of what AI and Data Science are, with real-world examples.
@@ -50,4 +50,52 @@ Goal: Introduce ethical considerations in AI.
 Students “train” a model with preloaded examples and test its predictions.
 
 Goal: Apply concepts in a safe, interactive way.
-r student privacy.
+
+Tech Stack
+
+Frontend: React + Vite
+
+Visualization: Chart.js / Plotly.js
+
+ML (Optional): TensorFlow.js for in-browser models
+
+Styling: Tailwind CSS
+
+Hosting: Vercel / Netlify (recommended)
+
+Installation
+# Clone the repository
+git clone https://github.com/yourusername/yourprojectname.git
+
+# Navigate into the project directory
+cd yourprojectname
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+Running the App
+
+Open your browser and go to http://localhost:5173 (or the port Vite specifies)
+
+Navigate through the modules from the home screen
+
+No account or login is required
+
+Safety & Privacy
+
+No user-uploaded images or files
+
+No personal data collection
+
+No third-party analytics
+
+Fully AODA/WCAG 2.1 AA accessible design
+
+Credits
+
+Inspired by open educational tools like Machine Learning for Kids, Quick, Draw!, and Google Teachable Machine.
+
+All datasets and images are locally hosted for student privacy.
