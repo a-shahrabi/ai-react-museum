@@ -10,6 +10,7 @@ import Leaderboard from './Leaderboard';
 import Progress from './Progress';
 import Finish from './Finish';
 
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState('intro');
@@ -67,7 +68,11 @@ export default function App() {
       </div>
 
       <main className="container">
-        {tab === 'intro'       && <div className="card"><Intro /></div>}
+      {tab === 'intro' && (
+  <div className="card">
+    <Intro onStart={() => setTab('game')} />
+  </div>
+)}
         {tab === 'game'        && <div className="card"><Game onSaved={() => setTab('leaderboard')} /></div>}
         {tab === 'train'       && <div className="card"><Train /></div>}
         {tab === 'share'       && <div className="card"><ShareWall /></div>}
