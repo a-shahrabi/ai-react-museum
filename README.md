@@ -1,10 +1,10 @@
-AI & Data Science Learning Hub for Students
+#AI & Data Science Learning Hub for Students
 Overview
 
 This web application is an interactive, beginner-friendly platform designed for middle school students in Ontario to learn about Machine Learning and Data Science in a safe, engaging, and school-compliant way.
 It avoids complicated games or coding requirements, focusing instead on visual, guided, and hands-on activities that build understanding step-by-step.
 
-Features
+#Features
 
 Light Introduction to AI and Data Science concepts
 
@@ -20,7 +20,7 @@ One safe, preloaded hands-on activity where students interact with a mini AI mod
 
 School-friendly design: No personal data collection, no external tracking, all content runs in the browser
 
-Modules
+#Modules
 1. Welcome & Intro
 
 Short explanation of what AI and Data Science are, with real-world examples.
