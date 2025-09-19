@@ -1,15 +1,15 @@
-# 🤖 AI & Data Science Learning Hub for Students
+#  AI & Data Science Learning Hub for Students
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![React](https://img.shields.io/badge/React-18.0+-blue.svg)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-4.0+-646CFF.svg)](https://vitejs.dev/)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.1%20AA-green.svg)](https://www.w3.org/WAI/WCAG21/AA/)
 
-## 📋 Overview
+##  Overview
 
 This web application is an interactive, beginner-friendly platform designed for middle school students in Ontario to learn about Machine Learning and Data Science in a safe, engaging, and school-compliant way. It avoids complicated games or coding requirements, focusing instead on visual, guided, and hands-on activities that build understanding step-by-step.
 
-## ✨ Features
+##  Features
 
 - **Light Introduction to AI and Data Science concepts** tailored for middle school level
 - **Three non-game interactive modules** that explain:
@@ -20,7 +20,7 @@ This web application is an interactive, beginner-friendly platform designed for 
 - **School-friendly design**: No personal data collection, no external tracking, all content runs in the browser
 - **Fully accessible**: AODA/WCAG 2.1 AA compliant design
 
-## 📚 Learning Modules
+##  Learning Modules
 
 ### 1.  Welcome & Intro
 Short explanation of what AI and Data Science are, with real-world examples relevant to students' daily lives.
@@ -47,7 +47,7 @@ Students "train" a simple classification model with preloaded examples (e.g., ca
 
 **Goal:** Apply learned concepts in a safe, interactive environment.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Frontend:** React 18+ with Vite
 - **Visualization:** Chart.js / Plotly.js for interactive charts
